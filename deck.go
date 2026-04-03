@@ -1,6 +1,9 @@
 package main
 
-import "strings"
+import (
+	"os"
+	"strings"
+)
 
 type deck []string
 
@@ -28,4 +31,8 @@ func deal(d deck, handSize int) (deck, deck) {
 
 func (d deck) toString() string {
 	return strings.Join([]string(d), ",")
+}
+
+func (d deck) saveToFile(filename string) error {
+	return os.WriteFile(filename, []byte(d.toString()), 0666)
 }

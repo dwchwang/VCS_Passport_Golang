@@ -1,19 +1,17 @@
 package main
 
-import (
-	"fmt"
-	"os"
-)
+// import (
+// 	"fmt"
+// )
 
 func main() {
 	cards := newDeck()
 	// firstHand, remainingDeck := deal(cards, 5)
 	// firstHand.print()
 	// remainingDeck.print()
-	cardsString := cards.toString()
-	fmt.Println(cardsString)
+	// cardsString := cards.toString()
+	// fmt.Println(cardsString)
+	cards.saveToFile("my_cards")	
 }
 
-func (d deck) saveToFile(filename string) error {
-	return os.WriteFile(filename, []byte(d.toString()), 0666)
-}
+
