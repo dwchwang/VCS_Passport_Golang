@@ -31,7 +31,7 @@ func main() {
 			}
 		case 2:
 			fmt.Println("===== Danh sach sach =====")
-			if err := library.ListBooks(); err != nil {
+			if err := library.ListBooks(lib); err != nil {
 				fmt.Println("Loi khi hien thi danh sach sach:", err)
 			}
 		case 3:

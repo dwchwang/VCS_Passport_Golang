@@ -28,3 +28,11 @@ func (lib *Library) AddBookStore(id, title, author string) error {
 
 	return nil
 }
+
+func (lib *Library) ListBooksStore() []models.Book {
+	books := make([]models.Book, 0, len(lib.Books))
+	for _, book := range lib.Books {
+		books = append(books, book)
+	}	
+	return books
+}
