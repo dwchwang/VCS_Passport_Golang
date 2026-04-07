@@ -63,8 +63,15 @@ func ListBorrowers(lib *Library) error {
 	return nil
 }
 
-func BorrowBook() error {
-	// Implementation for borrowing a book
+func BorrowBook(lib *Library) error {
+	id := utils.GenerateID()
+	bookID := utils.GetNotEmptyValue("Nhap ID sach can muon:")
+	borrowerID := utils.GetNotEmptyValue("Nhap ID nguoi muon:")
+	if err := lib.BorrowBookStore(id, bookID, borrowerID); err != nil {
+		return err
+	}
+
+	fmt.Println("Sach da duoc muon thanh cong! ID giao dich:", id)
 	return nil
 }
 

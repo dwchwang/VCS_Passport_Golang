@@ -46,7 +46,7 @@ func main() {
 			}
 		case 5:
 			fmt.Println("===== Muon sach =====")
-			if err := library.BorrowBook(); err != nil {
+			if err := library.BorrowBook(lib); err != nil {
 				fmt.Println("Loi khi muon sach:", err)
 			}
 		case 6:
