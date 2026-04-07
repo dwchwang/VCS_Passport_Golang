@@ -37,13 +37,29 @@ func ListBooks(lib *Library) error {
 	return nil
 }
 
-func AddBorrower() error {
-	// Implementation for adding a borrower
+func AddBorrower(lib *Library) error {
+	id := utils.GenerateID()
+	name := utils.GetNotEmptyValue("Nhap ten nguoi muon:")
+	email := utils.GetNotEmptyValue("Nhap email:")
+
+	if err := lib.AddBorrowerStore(id, name, email); err != nil {
+		return err
+	}
+
+	fmt.Println("Nguoi muon da duoc them thanh cong!")
 	return nil
 }
 
-func ListBorrowers() error {
-	// Implementation for listing borrowers
+func ListBorrowers(lib *Library) error {
+	borrowers := lib.ListBorrowersStore()
+	if len(borrowers) == 0 {
+		fmt.Println("Khong co nguoi muon nao trong thu vien.")
+		return nil
+	}
+	fmt.Println("Danh sach nguoi muon trong thu vien:")
+	for _, borrower := range borrowers {
+		fmt.Printf("ID: %s | Ten: %s | Email: %s\n", borrower.ID, borrower.Name, borrower.Email)
+	}
 	return nil
 }
 

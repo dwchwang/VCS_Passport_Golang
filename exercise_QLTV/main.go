@@ -36,12 +36,12 @@ func main() {
 			}
 		case 3:
 			fmt.Println("===== Them nguoi muon =====")
-			if err := library.AddBorrower(); err != nil {
+			if err := library.AddBorrower(lib); err != nil {
 				fmt.Println("Loi khi them nguoi muon:", err)
 			}
 		case 4:
 			fmt.Println("===== Danh sach nguoi muon =====")
-			if err := library.ListBorrowers(); err != nil {
+			if err := library.ListBorrowers(lib); err != nil {
 				fmt.Println("Loi khi hien thi danh sach nguoi muon:", err)
 			}
 		case 5:
