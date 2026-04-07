@@ -11,7 +11,14 @@ var studentLists []Student
 func addStudent() {
 	var scores []float64
 	fmt.Println("===== Them sinh vien =====")
-	id := utils.GetPositiveInt("Nhap ID sinh vien: ")
+	var id int
+	for {
+		id = utils.GetPositiveInt("Nhap ID sinh vien: ")
+		if utils.IsIdUnique(id, studentLists) {
+			break
+		}
+		fmt.Println("ID da ton tai. Vui long nhap ID khac.")
+	}
 	name := utils.GetNotEmptyValue("Nhap ten sinh vien: ")
 	class := utils.GetNotEmptyValue("Nhap lop sinh vien: ")
 	totalPoints := utils.GetPositiveInt("Nhap so luong diem sinh vien: ")

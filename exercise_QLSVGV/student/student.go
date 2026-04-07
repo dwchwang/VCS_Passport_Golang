@@ -23,3 +23,7 @@ func (s Student) GetAverageScore() float64 {
 	}
 	return total / float64(len(s.Scores))
 }
+
+func (s Student) GetID() int {
+	return s.ID
+}

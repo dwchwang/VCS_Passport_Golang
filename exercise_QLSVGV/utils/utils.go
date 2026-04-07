@@ -63,3 +63,16 @@ func ClearScreen() {
 		fmt.Println("Error clearing screen:", err)
 	}
 }
+
+type HasID interface {
+	GetID() int
+}
+
+func IsIdUnique[T HasID](id int, list []T) bool {
+	for _, item := range list {
+		if item.GetID() == id {
+			return false
+		}
+	}
+	return true
+}

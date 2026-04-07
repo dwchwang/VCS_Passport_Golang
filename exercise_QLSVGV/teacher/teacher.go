@@ -17,3 +17,8 @@ func (t Teacher) GetInfo() string {
 func (t Teacher) GetTotalSalary() float64 {
 	return t.Salary + t.Bonus
 }
+
+
+func (t Teacher) GetID() int {
+	return t.ID
+}

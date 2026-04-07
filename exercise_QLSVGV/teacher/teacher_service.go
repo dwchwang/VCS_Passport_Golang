@@ -10,7 +10,15 @@ var teacherLists []Teacher
 
 func addTeacher() {
 	fmt.Println("===== Them giang vien =====")
-	id := utils.GetPositiveInt("Nhap ID giang vien: ")
+	var id int
+	for {
+		id = utils.GetPositiveInt("Nhap ID giang vien: ")
+		if utils.IsIdUnique(id, teacherLists) {
+			break
+		}
+		fmt.Println("ID da ton tai. Vui long nhap ID khac.")
+	}
+
 	name := utils.GetNotEmptyValue("Nhap ten giang vien: ")
 	subject := utils.GetNotEmptyValue("Nhap mon hoc: ")
 	salary := utils.GetPositiveFloat("Nhap luong co ban: ")
