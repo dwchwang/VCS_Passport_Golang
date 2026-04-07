@@ -89,3 +89,17 @@ func (lib *Library) BorrowBookStore(id, bookID, borrowerID string) error {
 
 	return nil
 }
+
+
+func (lib *Library) ListBorrowHistoryByBorrower(borrowerID string) []models.Transaction {
+	if _, borrowerExists := lib.Borrowers[borrowerID]; !borrowerExists {
+		return nil
+	}
+	history := make([]models.Transaction, 0)
+	for _, transaction := range lib.Transactions {
+		if transaction.BorrowerID == borrowerID {
+			history = append(history, transaction)
+		}
+	}
+	return history
+}

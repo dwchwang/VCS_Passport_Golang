@@ -2,6 +2,7 @@ package library
 
 import (
 	"fmt"
+
 	"dwchwang.com/exercise_qltv/utils"
 )
 
@@ -75,8 +76,21 @@ func BorrowBook(lib *Library) error {
 	return nil
 }
 
-func ListBorrowHistory() error {
-	// Implementation for listing borrow history
+func ListBorrowHistory(lib *Library) error {
+	borrowerId := utils.GetNotEmptyValue("Nhap ID nguoi muon de xem lich su muon:")
+	transactions := lib.ListBorrowHistoryByBorrower(borrowerId)
+	if len(transactions) == 0 {
+		fmt.Println("Khong co lich su muon nao.")
+		return nil
+	}
+	fmt.Println("Lich su muon:")
+	for _, transaction := range transactions {
+		returnDate := "Chua tra"
+		if !transaction.ReturnDate.IsZero() {
+			returnDate = transaction.ReturnDate.Format("2006-01-02")
+		}
+		fmt.Printf("ID Transaction: %s | ID Sach: %s | Ngay muon: %v | Ngay tra: %v\n", transaction.ID, transaction.BookID, transaction.BorrowDate.Format("2000-01-01"), returnDate)
+	}
 	return nil
 }
 

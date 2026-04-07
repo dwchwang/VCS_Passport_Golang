@@ -51,7 +51,7 @@ func main() {
 			}
 		case 6:
 			fmt.Println("===== Lich su muon =====")
-			if err := library.ListBorrowHistory(); err != nil {
+			if err := library.ListBorrowHistory(lib); err != nil {
 				fmt.Println("Loi khi xem lich su muon:", err)
 			}
 		case 7:
