@@ -40,7 +40,17 @@ func addStudent() {
 }
 
 func deleteStudent() {
-	fmt.Println("Xoa sinh vien.")
+	fmt.Println("===== Xoa sinh vien =====")
+	id := utils.GetPositiveInt("Nhap ID sinh vien can xoa: ")
+	for key, s := range studentLists {
+		if s.ID == id {
+			studentLists = append(studentLists[:key], studentLists[key+1:]...)
+			fmt.Println("Xoa sinh vien thanh cong.")
+			return
+		}
+	}
+	fmt.Println("Khong tim thay sinh vien nao voi ID da nhap.")
+
 }
 
 func updateStudent() {

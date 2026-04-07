@@ -38,7 +38,16 @@ func addTeacher() {
 }
 
 func deleteTeacher() {
-	fmt.Println("Xoa giang vien.")
+	fmt.Println("===== Xoa giang vien =====")
+	id := utils.GetPositiveInt("Nhap ID giang vien can xoa: ")
+	for key, t := range teacherLists {
+		if t.ID == id {
+			teacherLists = append(teacherLists[:key], teacherLists[key+1:]...)
+			fmt.Println("Xoa giang vien thanh cong.")
+			return
+		}
+	}
+	fmt.Println("Khong tim thay giang vien nao voi ID da nhap.")
 }
 
 func updateTeacher() {
