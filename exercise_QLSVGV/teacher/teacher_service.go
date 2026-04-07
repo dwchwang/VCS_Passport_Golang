@@ -79,7 +79,16 @@ func listTeachers() {
 }
 
 func searchTeachers() {
-	fmt.Println("Tim kiem giang vien.")
+	fmt.Println("===== Tim kiem giang vien =====")
+	id := utils.GetPositiveInt("Nhap ID giang vien can tim: ")
+	for _, t := range teacherLists {
+		if t.ID == id {
+			fmt.Println("Giang vien tim thay:")
+			fmt.Println(t.GetInfo())
+			return
+		}
+	}
+	fmt.Println("Khong tim thay giang vien nao voi ID da nhap.")
 }
 
 func ManageTeachers() {
