@@ -1,12 +1,26 @@
 package library
 
-func AddBook() error {
-	// Implementation for adding a book
+import (
+	"fmt"
+	"dwchwang.com/exercise_qltv/utils"
+)
+
+
+
+func AddBook(lib *Library) error {
+	id := utils.GenerateID()
+	title := utils.GetNotEmptyValue("Nhap tieu de:")
+	author := utils.GetNotEmptyValue("Nhap ten tac gia:")
+
+	if err := lib.AddBookStore(id, title, author); err != nil {
+		return err
+	}
+
+	fmt.Println("Sach da duoc them thanh cong!")
 	return nil
 }
 
 func ListBooks() error {
-	// Implementation for listing books
 	return nil
 }
 
