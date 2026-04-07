@@ -39,6 +39,20 @@ func GetPositiveFloat(prompt string) float64 {
 	}
 }
 
+func GetOptionalPositiveFloat(prompt string, oldValue float64) float64 {
+
+	input := ReadInput(prompt)
+	if input == "" {
+		return oldValue
+	}
+	value, err := strconv.ParseFloat(input, 64)
+	if err != nil && value < 0 {
+		fmt.Println("Gia tri ko hop le, giu nguyen gia tri cu.")
+		return oldValue
+	}
+	return value
+}
+
 func GetNotEmptyValue(prompt string) string {
 	for {
 		input := ReadInput(prompt)
@@ -49,6 +63,14 @@ func GetNotEmptyValue(prompt string) string {
 	}
 }
 
+func GetOptionalValue(prompt string, oldValue string) string {
+	input := ReadInput(prompt)
+	if input == "" {
+		return oldValue
+	}
+	return input
+}
+
 func ClearScreen() {
 	var cmd *exec.Cmd
 
@@ -57,7 +79,7 @@ func ClearScreen() {
 		cmd = exec.Command("cmd", "/c", "cls")
 	default:
 		cmd = exec.Command("clear")
-	} 
+	}
 	cmd.Stdout = os.Stdout
 	if err := cmd.Run(); err != nil {
 		fmt.Println("Error clearing screen:", err)

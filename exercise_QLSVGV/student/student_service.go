@@ -44,7 +44,30 @@ func deleteStudent() {
 }
 
 func updateStudent() {
-	fmt.Println("Sua sinh vien.")
+	fmt.Println("===== Sua sinh vien =====")
+	id := utils.GetPositiveInt("Nhap ID sinh vien can sua: ")
+
+	for key, s := range studentLists {
+		if s.ID == id {
+			fmt.Printf("Day la id: %d \n", key + 1)
+			fmt.Println("Nhap thong moi (Nhan Enter de giu nguyen gia tri hien tai)")
+			name := utils.GetOptionalValue(fmt.Sprintf("Nhap ten (%s):", s.Name), s.Name)
+			class := utils.GetOptionalValue(fmt.Sprintf("Nhap lop (%s):", s.Class), s.Class)
+
+			newScores := make([]float64, len(s.Scores))
+			for i, score := range s.Scores {
+				newScores[i] = utils.GetOptionalPositiveFloat(fmt.Sprintf("Nhap diem %d (%.2f): ", i+1, score), score)
+			}
+			studentLists[key] = Student{
+				ID:     id,
+				Name:   name,
+				Class:  class,
+				Scores: newScores,
+			}
+			fmt.Println("Sua sinh vien thanh cong.")
+			return
+		}
+	}
 }
 
 func listStudents() {

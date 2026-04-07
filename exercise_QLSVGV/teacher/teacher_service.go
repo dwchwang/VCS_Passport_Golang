@@ -42,7 +42,29 @@ func deleteTeacher() {
 }
 
 func updateTeacher() {
-	fmt.Println("Sua giang vien.")
+	fmt.Println("===== Sua giang vien =====")
+	id := utils.GetPositiveInt("Nhap ID giang vien can sua: ")
+
+	for key, t := range teacherLists {
+		if t.ID == id {
+			fmt.Printf("Day la id: %d \n", key + 1)
+			fmt.Println("Nhap thong moi (Nhan Enter de giu nguyen gia tri hien tai)")
+			name := utils.GetOptionalValue(fmt.Sprintf("Nhap ten (%s):", t.Name), t.Name)
+			subject := utils.GetOptionalValue(fmt.Sprintf("Nhap mon hoc (%s):", t.Subject), t.Subject)
+			salary := utils.GetOptionalPositiveFloat(fmt.Sprintf("Nhap so luong co ban (%.2f)", t.Salary), t.Salary)
+			bonus := utils.GetOptionalPositiveFloat(fmt.Sprintf("Nhap so thuong (%.2f)", t.Bonus), t.Bonus)
+
+			teacherLists[key] = Teacher{
+				ID:      id,
+				Name:    name,
+				Subject: subject,
+				Salary:  salary,
+				Bonus:   bonus,
+			}
+			fmt.Println("Sua giang vien thanh cong.")
+			return
+		}
+	}
 }
 
 func listTeachers() {
