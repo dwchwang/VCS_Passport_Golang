@@ -11,11 +11,15 @@ import (
 type CpuMonitor struct {
 }
 
+func(m *CpuMonitor) Name () string {
+	return "CPU Monitor"
+}
+
 func (m *CpuMonitor) Check(ctx context.Context) string {
 
 	percent, err := cpu.PercentWithContext(ctx, 1*time.Second, false)
 	if err != nil && len(percent) == 0 {
 		return "N/A"
 	}
-	return fmt.Sprintf("Current CPU usage: %.2f%%", percent[0])
+	return fmt.Sprintf("%.2f%%", percent[0])
 }
