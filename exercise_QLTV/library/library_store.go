@@ -2,6 +2,7 @@ package library
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"dwchwang.com/exercise_qltv/models"
@@ -125,10 +126,21 @@ func (lib *Library) ReturnBookStore(transactionID string) error {
 	}
 	book.IsBorrowed = false
 	lib.Books[transaction.BookID] = book
-	
+
 	// cap nhat ngay tra trong giao dich
 	transaction.ReturnDate = time.Now()
 	lib.Transactions[transactionID] = transaction
 
 	return nil
+}
+
+func (lib *Library) SearchBooksStore(keyword string) []models.Book {
+	keyword = strings.ToLower(keyword)
+	results := make([]models.Book, 0)
+	for _, book := range lib.Books {
+		if strings.Contains(strings.ToLower(book.Title), keyword) || strings.Contains(strings.ToLower(book.Author), keyword) {
+			results = append(results, book)
+		}
+	}
+	return results
 }

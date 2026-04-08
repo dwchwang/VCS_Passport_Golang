@@ -104,7 +104,20 @@ func ReturnBook(lib *Library) error {
 	return nil
 }
 
-func SearchBooks() error {
-	// Implementation for searching books
+func SearchBooks(lib *Library) error {
+	keyword := utils.GetNotEmptyValue("Nhap tu khoa de tim kiem sach (tieu de hoac tac gia):")
+	results := lib.SearchBooksStore(keyword)
+	if len(results) == 0 {
+		fmt.Println("Khong tim thay sach nao voi tu khoa:", keyword)
+		return nil
+	}
+	fmt.Println("Ket qua tim kiem:")
+	for _, book := range results {
+		status := "Con"	
+		if book.IsBorrowed {
+			status = "Da muon"
+		}
+		fmt.Printf("ID: %s | Tieu de: %s | Tac gia: %s | Trang thai: %s\n", book.ID, book.Title, book.Author, status)
+	}
 	return nil
 }

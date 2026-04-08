@@ -61,7 +61,7 @@ func main() {
 			}
 		case 8:
 			fmt.Println("===== Tim kiem sach =====")
-			if err := library.SearchBooks(); err != nil {
+			if err := library.SearchBooks(lib); err != nil {
 				fmt.Println("Loi khi tim kiem sach:", err)
 			}
 		case 9:
