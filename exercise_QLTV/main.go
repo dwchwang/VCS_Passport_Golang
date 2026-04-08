@@ -56,7 +56,7 @@ func main() {
 			}
 		case 7:
 			fmt.Println("===== Tra sach =====")
-			if err := library.ReturnBook(); err != nil {
+			if err := library.ReturnBook(lib); err != nil {
 				fmt.Println("Loi khi tra sach:", err)
 			}
 		case 8:

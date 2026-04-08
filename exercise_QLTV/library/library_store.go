@@ -90,8 +90,7 @@ func (lib *Library) BorrowBookStore(id, bookID, borrowerID string) error {
 	return nil
 }
 
-
-func (lib *Library) ListBorrowHistoryByBorrower(borrowerID string) []models.Transaction {
+func (lib *Library) ListBorrowHistoryByBorrowerStore(borrowerID string) []models.Transaction {
 	if _, borrowerExists := lib.Borrowers[borrowerID]; !borrowerExists {
 		return nil
 	}
@@ -102,4 +101,34 @@ func (lib *Library) ListBorrowHistoryByBorrower(borrowerID string) []models.Tran
 		}
 	}
 	return history
+}
+
+func (lib *Library) GetBookTitleStore(bookID string) string {
+	book := lib.Books[bookID]
+	return book.Title
+}
+
+func (lib *Library) ReturnBookStore(transactionID string) error {
+	transaction, exists := lib.Transactions[transactionID]
+	if !exists {
+		return fmt.Errorf("Giao dich voi ID %s khong ton tai", transactionID)
+	}
+
+	if !transaction.ReturnDate.IsZero() {
+		return fmt.Errorf("Sach trong giao dich %s da duoc tra truoc do", transactionID)
+	}
+
+	// cap nhat trang thai cua sach do
+	book, bookExists := lib.Books[transaction.BookID]
+	if !bookExists {
+		return fmt.Errorf("Sach voi ID %s khong ton tai", transaction.BookID)
+	}
+	book.IsBorrowed = false
+	lib.Books[transaction.BookID] = book
+	
+	// cap nhat ngay tra trong giao dich
+	transaction.ReturnDate = time.Now()
+	lib.Transactions[transactionID] = transaction
+
+	return nil
 }

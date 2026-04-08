@@ -6,8 +6,6 @@ import (
 	"dwchwang.com/exercise_qltv/utils"
 )
 
-
-
 func AddBook(lib *Library) error {
 	id := utils.GenerateID()
 	title := utils.GetNotEmptyValue("Nhap tieu de:")
@@ -30,7 +28,7 @@ func ListBooks(lib *Library) error {
 	fmt.Println("Danh sach sach trong thu vien:")
 	for _, book := range books {
 		status := "Con"
-		if(book.IsBorrowed) {
+		if book.IsBorrowed {
 			status = "Da muon"
 		}
 		fmt.Printf("ID: %s | Tieu de: %s | Tac gia: %s | Trang thai: %s\n", book.ID, book.Title, book.Author, status)
@@ -78,7 +76,7 @@ func BorrowBook(lib *Library) error {
 
 func ListBorrowHistory(lib *Library) error {
 	borrowerId := utils.GetNotEmptyValue("Nhap ID nguoi muon de xem lich su muon:")
-	transactions := lib.ListBorrowHistoryByBorrower(borrowerId)
+	transactions := lib.ListBorrowHistoryByBorrowerStore(borrowerId)
 	if len(transactions) == 0 {
 		fmt.Println("Khong co lich su muon nao.")
 		return nil
@@ -89,13 +87,20 @@ func ListBorrowHistory(lib *Library) error {
 		if !transaction.ReturnDate.IsZero() {
 			returnDate = transaction.ReturnDate.Format("2006-01-02")
 		}
-		fmt.Printf("ID Transaction: %s | ID Sach: %s | Ngay muon: %v | Ngay tra: %v\n", transaction.ID, transaction.BookID, transaction.BorrowDate.Format("2000-01-01"), returnDate)
+		fmt.Printf("ID Transaction: %s | Ten Sach muon: %s | Ngay muon: %v | Ngay tra: %v\n", transaction.ID, lib.GetBookTitleStore(transaction.BookID), transaction.BorrowDate.Format("2006-01-02"), returnDate)
 	}
 	return nil
 }
 
-func ReturnBook() error {
-	// Implementation for returning a book
+
+
+func ReturnBook(lib *Library) error {
+	transactionID := utils.GetNotEmptyValue("Nhap ID giao dich muon:")
+
+	if err := lib.ReturnBookStore(transactionID); err != nil {
+		return err
+	}
+	fmt.Println("Sach da duoc tra thanh cong!")
 	return nil
 }
 
