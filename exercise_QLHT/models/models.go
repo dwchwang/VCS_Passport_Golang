@@ -1,6 +1,9 @@
 package models
 
-import "context"
+import (
+	"context"
+	"sync"
+)
 
 type Monitor interface {
 	Name() string
@@ -11,3 +14,8 @@ type SystemStat struct {
 	Name  string
 	Value string
 }
+
+var (
+	StatMutex sync.Mutex
+	Stats = map[string]SystemStat{}
+)

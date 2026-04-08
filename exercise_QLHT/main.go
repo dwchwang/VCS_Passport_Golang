@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -17,10 +18,12 @@ func main() {
 	monitorList := []models.Monitor{
 		&monitor.CpuMonitor{},
 		&monitor.MemMonitor{},
+		&monitor.NetMonitor{},
+		&monitor.DiskMonitor{},
 	}
 
 	var wg sync.WaitGroup
-	statCh := make(chan models.SystemStat, 2)
+	statCh := make(chan models.SystemStat)
 
 	for _, m := range monitorList {
 		wg.Add(1)
@@ -29,7 +32,20 @@ func main() {
 
 	go func() {
 		for stat := range statCh {
-			println(stat.Name + ": " + stat.Value)
+			models.StatMutex.Lock()
+			models.Stats[stat.Name] = stat
+			models.StatMutex.Unlock()
+		}
+	}()
+	printTicker := time.NewTicker(3 * time.Second)
+	go func() {
+		fmt.Println("===== System Status =====")
+		for range printTicker.C {
+			for _, stat := range models.Stats {
+				models.StatMutex.Lock()
+				fmt.Printf("[%s] %s \n", stat.Name, stat.Value)
+				models.StatMutex.Unlock()
+			}
 		}
 	}()
 
@@ -37,4 +53,5 @@ func main() {
 	cancel()
 	wg.Wait()
 	close(statCh)
+	printTicker.Stop()
 }
