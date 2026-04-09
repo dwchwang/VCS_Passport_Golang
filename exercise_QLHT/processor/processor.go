@@ -3,6 +3,7 @@ package processor
 import (
 	"context"
 	"fmt"
+	"os"
 	"sort"
 	"sync"
 	"time"
@@ -24,9 +25,15 @@ func RunMonitor(ctx context.Context, wg *sync.WaitGroup, statCh chan<- models.Sy
 			fmt.Println("CPU monitor stopped.")
 			return
 		case <-ticker.C:
-			statCh <- models.SystemStat{
+			value, alert := m.Check(ctx)
+			stat :=  models.SystemStat{
 				Name:  m.Name(),
-				Value: m.Check(ctx),
+				Value: value,
+			}
+			statCh <- stat
+
+			if alert {
+				LogAlert(stat)
 			}
 		}
 	}
@@ -78,7 +85,7 @@ func GetTopProcessor(ctx context.Context) string {
 
 				ranPercent := (float64(memInfo.RSS) / float64(totalMemory)) * 100
 				if cpuPercent < 1 || ranPercent < 1 {
-					return 
+					return
 				}
 
 				createTime, err := p.CreateTimeWithContext(ctx)
@@ -125,10 +132,9 @@ func GetTopProcessor(ctx context.Context) string {
 		return memList[i].MemoryPercent > memList[j].MemoryPercent
 	})
 
-	
 	output += "==== Top 5 CPU consuming processes ==== \n"
 	topCPU := 5
-	if(len(cpuList) < topCPU){
+	if len(cpuList) < topCPU {
 		topCPU = len(cpuList)
 	}
 	for key, c := range cpuList[:topCPU] {
@@ -144,7 +150,7 @@ func GetTopProcessor(ctx context.Context) string {
 	}
 
 	topRam := 5
-	if(len(memList) < topRam){
+	if len(memList) < topRam {
 		topRam = len(memList)
 	}
 	output += "==== Top 5 Ram consuming processes ==== \n"
@@ -160,5 +166,75 @@ func GetTopProcessor(ctx context.Context) string {
 		)
 	}
 
+	ExportToCSV(cpuList, memList)
 	return output
+}
+
+func ExportToCSV(cpuList, memList []models.ProcStat) {
+	f, err := os.OpenFile("process_stats.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Sprintf("[Export CSV Error] Fail to export csv: %v \n ", err)
+		return
+	}
+
+	defer f.Close()
+
+	if stat, err := f.Stat(); err == nil && stat.Size() == 0 {
+		f.WriteString("TimeStamp,PID,Name,CPU (%),Memory (MB),Ram (%),RunningTime \n")
+	}
+
+	topCPU := 5
+	if len(cpuList) < topCPU {
+		topCPU = len(cpuList)
+	}
+	for _, c := range cpuList[:topCPU] {
+		line := fmt.Sprintf("%s,%d,%s,%.2f,%.2f,%.2f,%s \n",
+			time.Now().Format(time.RFC3339),
+			c.PID,
+			c.Name,
+			c.CPUPercent,
+			float64(c.MemoryUsed)/1024.0/1024.0,
+			c.MemoryPercent,
+			c.RunningTime,
+		)
+		f.WriteString(line)
+	}
+
+	topRam := 5
+	if len(memList) < topRam {
+		topRam = len(memList)
+	}
+	for _, r := range memList[:topRam] {
+		line := fmt.Sprintf("%s,%d,%s,%.2f,%.2f,%.2f,%s \n",
+			time.Now().Format(time.RFC3339),
+			r.PID,
+			r.Name,
+			r.CPUPercent,
+			float64(r.MemoryUsed)/1024.0/1024.0,
+			r.MemoryPercent,
+			r.RunningTime,
+		)
+		f.WriteString(line)
+	}
+}
+
+
+func LogAlert(stat models.SystemStat) {
+	models.StatMutex.Lock()
+	defer models.StatMutex.Unlock()
+	f, err := os.OpenFile("alert.log.", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Sprintf("[Log Alert] Fail to alert log: %v \n ", err)
+		return
+	}
+
+	defer f.Close()
+
+	logLine := fmt.Sprintf("[%s] ALERT: %s = %s \n", 
+		time.Now().Format(time.RFC3339),
+		stat.Name,
+		stat.Value,
+	)
+
+	f.WriteString(logLine)
 }
