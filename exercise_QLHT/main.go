@@ -47,7 +47,7 @@ func main() {
 				models.StatMutex.Unlock()
 			}
 
-			processor.GetTopProcessor(ctx)
+			fmt.Println(processor.GetTopProcessor(ctx))
 		}
 	}()
 

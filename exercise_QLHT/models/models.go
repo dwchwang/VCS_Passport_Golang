@@ -3,6 +3,7 @@ package models
 import (
 	"context"
 	"sync"
+	"time"
 )
 
 type Monitor interface {
@@ -15,7 +16,16 @@ type SystemStat struct {
 	Value string
 }
 
+type ProcStat struct {
+	PID           int32
+	Name          string
+	CPUPercent    float64
+	MemoryUsed    uint64
+	MemoryPercent float64
+	RunningTime   time.Duration
+}
+
 var (
 	StatMutex sync.Mutex
-	Stats = map[string]SystemStat{}
+	Stats     = map[string]SystemStat{}
 )
