@@ -48,7 +48,6 @@ func GetTopProcessor(ctx context.Context) string {
 	}
 
 	var wg sync.WaitGroup
-	var mu sync.Mutex
 
 	var cpuList, memList []models.ProcStat
 
@@ -78,6 +77,10 @@ func GetTopProcessor(ctx context.Context) string {
 				}
 
 				ranPercent := (float64(memInfo.RSS) / float64(totalMemory)) * 100
+				if cpuPercent < 1 || ranPercent < 1 {
+					return 
+				}
+
 				createTime, err := p.CreateTimeWithContext(ctx)
 				if err != nil {
 					return
@@ -85,19 +88,16 @@ func GetTopProcessor(ctx context.Context) string {
 
 				runningTime := time.Since(time.Unix(createTime/1000, 0))
 
-				if cpuPercent > 1 || ranPercent > 1 {
-					mu.Lock()
-					procStat := models.ProcStat{
-						PID:           p.Pid,
-						Name:          name,
-						CPUPercent:    cpuPercent,
-						MemoryUsed:    memInfo.RSS,
-						MemoryPercent: ranPercent,
-						RunningTime:   runningTime,
-					}
-					procChan <- procStat
-					mu.Unlock()
+				procStat := models.ProcStat{
+					PID:           p.Pid,
+					Name:          name,
+					CPUPercent:    cpuPercent,
+					MemoryUsed:    memInfo.RSS,
+					MemoryPercent: ranPercent,
+					RunningTime:   runningTime,
 				}
+				procChan <- procStat
+
 			}
 		}(p)
 	}
@@ -122,30 +122,41 @@ func GetTopProcessor(ctx context.Context) string {
 	})
 
 	sort.Slice(memList, func(i int, j int) bool {
-		return memList[i].CPUPercent > memList[j].CPUPercent
+		return memList[i].MemoryPercent > memList[j].MemoryPercent
 	})
 
+	
 	output += "==== Top 5 CPU consuming processes ==== \n"
-	for i := 0; i < len(cpuList) && i < 5; i++ {
-		output += fmt.Sprintf("[%d] %s - CPU: %.2f%% - RAM: %.2f MB (%.2f%%) - Running Time: %s \n",
-			cpuList[i].PID,
-			cpuList[i].Name,
-			cpuList[i].CPUPercent,
-			float64(cpuList[i].MemoryUsed)/1024.0/1024.0,
-			cpuList[i].MemoryPercent,
-			cpuList[i].RunningTime,
+	topCPU := 5
+	if(len(cpuList) < topCPU){
+		topCPU = len(cpuList)
+	}
+	for key, c := range cpuList[:topCPU] {
+		output += fmt.Sprintf("%d. [%d] %s - CPU: %.2f%% - RAM: %.2f MB (%.2f%%) - Running Time: %s \n",
+			key+1,
+			c.PID,
+			c.Name,
+			c.CPUPercent,
+			float64(c.MemoryUsed)/1024.0/1024.0,
+			c.MemoryPercent,
+			c.RunningTime,
 		)
 	}
 
+	topRam := 5
+	if(len(memList) < topRam){
+		topRam = len(memList)
+	}
 	output += "==== Top 5 Ram consuming processes ==== \n"
-	for i := 0; i < len(memList) && i < 5; i++ {
-		output += fmt.Sprintf("[%d] %s - Mem: %.2f%% - RAM: %.2f MB (%.2f%%) - Running Time: %s \n",
-			memList[i].PID,
-			memList[i].Name,
-			memList[i].CPUPercent,
-			float64(memList[i].MemoryUsed)/1024.0/1024.0,
-			memList[i].MemoryPercent,
-			memList[i].RunningTime,
+	for key, r := range memList[:topRam] {
+		output += fmt.Sprintf("%d. [%d] %s - Mem: %.2f%% - RAM: %.2f MB (%.2f%%) - Running Time: %s \n",
+			key+1,
+			r.PID,
+			r.Name,
+			r.CPUPercent,
+			float64(r.MemoryUsed)/1024.0/1024.0,
+			r.MemoryPercent,
+			r.RunningTime,
 		)
 	}
 
