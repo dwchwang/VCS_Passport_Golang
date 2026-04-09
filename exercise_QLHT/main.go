@@ -37,7 +37,7 @@ func main() {
 			models.StatMutex.Unlock()
 		}
 	}()
-	printTicker := time.NewTicker(3 * time.Second)
+	printTicker := time.NewTicker(4 * time.Second)
 	go func() {
 		fmt.Println("===== System Status =====")
 		for range printTicker.C {
@@ -46,6 +46,8 @@ func main() {
 				fmt.Printf("[%s] %s \n", stat.Name, stat.Value)
 				models.StatMutex.Unlock()
 			}
+
+			processor.GetTopProcessor(ctx)
 		}
 	}()
 

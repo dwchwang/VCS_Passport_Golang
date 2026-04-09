@@ -18,7 +18,7 @@ func (m *MemMonitor) Check(ctx context.Context) string {
 
 	vmStat, err := mem.VirtualMemoryWithContext(ctx)
 	if err != nil {
-		return "N/A"
+		return fmt.Sprintf("[Mem Monitor] Could not retrieve process list: %v \n ", err)
 	}
 	return fmt.Sprintf("%.2f%%", vmStat.UsedPercent)
 }
