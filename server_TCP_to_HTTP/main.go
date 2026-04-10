@@ -19,6 +19,7 @@ func main() {
 
 	mux.HandleFunc("GET /users", api.getUsersHandler)
 	mux.HandleFunc("POST /users", api.createUsershandler)
+	mux.HandleFunc("GET /users/{id}", api.getUserById)
 
 	log.Println("Server chay tai cong 8080")
 	if err := srv.ListenAndServe(); err != nil{
