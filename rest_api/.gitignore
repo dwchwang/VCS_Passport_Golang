@@ -1,0 +1,38 @@
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Build output
+bin/
+dist/
+build/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.out
+*.test
+
+# Logs
+*.log
+
+# Coverage
+coverage.out
+coverage.html
+
+# Go workspace / cache files
+go.work
+go.work.sum
+
+# Temp files
+tmp/
+temp/
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
