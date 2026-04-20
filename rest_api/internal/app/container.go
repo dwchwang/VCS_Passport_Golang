@@ -11,28 +11,28 @@ import (
 
 // Khởi tạo toàn bộ ứng dụng và trả về Engine của Gin
 func SetupApp(db *gorm.DB) *gin.Engine {
-	// 1. Khởi tạo tất cả Repositories
+	// module book
 	bookRepo := repository.NewBookRepository(db)
-	// userRepo := repository.NewUserRepository(db)
-	// borrowRepo := repository.NewBorrowRepository(db)
-
-	// 2. Khởi tạo tất cả Services
 	bookService := service.NewBookService(bookRepo)
-	// userService := service.NewUserService(userRepo)
-	// borrowService := service.NewBorrowService(borrowRepo, bookRepo, userRepo)
-
-	// 3. Khởi tạo tất cả Handlers
 	bookHandler := handler.NewBookHandler(bookService)
-	// userHandler := handler.NewUserHandler(userService)
-
-	// 4. Lắp vào Routes
 	bookRoutes := routes.NewBookRoutes(bookHandler)
-	// userRoutes := routes.NewUserRoutes(userHandler)
+
+	// module borrower
+	borrowerRepo := repository.NewBorrowerRepository(db)
+	borrowerService := service.NewBorrowerService(borrowerRepo)
+	borrowerHandler := handler.NewBorrowerHandler(borrowerService)
+	borrowerRoutes := routes.NewBorrowerRoutes(borrowerHandler)
+
+	// module borrow record
+	borrowRecordRepo := repository.NewBorrowRecordRepository(db)
+	borrowRecordService := service.NewBorrowRecordService(borrowRecordRepo)
+	borrowRecordHandler := handler.NewBorrowRecordHandler(borrowRecordService)
+	borrowRecordRoutes := routes.NewBorrowRecordRoutes(borrowRecordHandler)
+
 
 	router := gin.Default()
-	
 	// Đăng ký toàn bộ vào router
-	routes.RegisterRoutes(router, bookRoutes) // phẩy thêm userRoutes, v.v.
+	routes.RegisterRoutes(router, bookRoutes, borrowerRoutes, borrowRecordRoutes) // phẩy thêm userRoutes, v.v.
 
 	return router
 }
