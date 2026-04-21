@@ -13,6 +13,7 @@ type BookService interface {
 	GetBookById(id uint) (*models.Book, error)
 	UpdateBook(id uint, book *models.Book) error
 	DeleteBook(id uint) error
+	GetUnborrowedBooks() ([]models.Book, error)
 }
 
 type bookService struct {
@@ -48,20 +49,21 @@ func (s *bookService) UpdateBook(id uint, updatedData *models.Book) error {
 	// 1. Kiểm tra xem sách có tồn tại không trước khi update
 	existingBook, err := s.repo.FindById(id)
 	if err != nil {
-		return err // Sẽ trả về lỗi "không tìm thấy sách" từ Repo
+		return err 
 	}
 
 	// 2. Cập nhật dữ liệu mới vào bản ghi cũ
 	existingBook.Title = updatedData.Title
 	existingBook.Author = updatedData.Author
-	// Lưu ý: Không cập nhật lại ID hoặc Trạng thái mượn/trả ở hàm này
 
 	// 3. Lưu xuống DB
 	return s.repo.Update(existingBook)
 }
 
 func (s *bookService) DeleteBook(id uint) error {
-	// Bạn có thể thêm logic: Kiểm tra xem sách có đang bị ai mượn không trước khi xóa
-	// (Tạm thời chúng ta cứ gọi hàm xóa thẳng)
 	return s.repo.Delete(id)
+}
+
+func (s *bookService) GetUnborrowedBooks() ([]models.Book, error) {
+	return s.repo.FindUnborrowedBooks()
 }

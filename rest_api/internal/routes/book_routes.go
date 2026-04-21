@@ -24,6 +24,7 @@ func (br *BookRoutes) Register(r *gin.RouterGroup) {
 	{
 		books.POST("", br.handler.CreateBook)
 		books.GET("", br.handler.GetAllBooks)
+		books.GET("/unborrowed", br.handler.GetUnborrowedBooks)
 		books.GET("/:id", br.handler.GetBookById)
 		books.PUT("/:id", br.handler.UpdateBook)
 		books.DELETE("/:id", br.handler.DeleteBook)

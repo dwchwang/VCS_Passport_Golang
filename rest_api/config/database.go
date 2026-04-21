@@ -6,7 +6,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/dwchwang/rest_api_golang/internal/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -51,14 +50,14 @@ func ConnectDatabase() *gorm.DB {
 
 	fmt.Println("Connected to DB")
 
-	err = db.AutoMigrate(
-		&models.Book{},
-		&models.Borrower{},
-		&models.BorrowRecord{},
-	)
-	if err != nil {
-		log.Fatal("Lỗi Migrate: ", err)
-	}
+	// err = db.AutoMigrate(
+	// 	&models.Book{},
+	// 	&models.Borrower{},
+	// 	&models.BorrowRecord{},
+	// )
+	// if err != nil {
+	// 	log.Fatal("Lỗi Migrate: ", err)
+	// }
 
 	DB = db
 	return db
